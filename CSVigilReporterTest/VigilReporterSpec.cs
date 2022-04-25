@@ -17,12 +17,21 @@ public class VigilReporterSpec
         var nodeId = "";
         var replicaId = "";
         var interval = 2;
-        var reporter = new VigilReporter(
-            url, 
-            secretToken, 
-            probeId, 
-            nodeId, 
-            replicaId, 
-            interval);
+        // var reporter = new VigilReporter(
+        //     url, 
+        //     secretToken, 
+        //     probeId, 
+        //     nodeId, 
+        //     replicaId, 
+        //     interval);
+        
+        Assert.Fail();
     }
+
+    [Test]
+    public void PayloadToJson_WhenCalled_TransformsPayloadDtoToString()
+    {
+        Assert.Fail();
+    }
+    
 }

@@ -1,12 +1,8 @@
-﻿using System.Diagnostics;
-using System.Net;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using CSVigilReporter.Dto;
 using CSVigilReporter.Processes;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-
 
 namespace CSVigilReporter;
 
@@ -19,6 +15,7 @@ public class VigilReporter: BackgroundService
     private readonly string ReplicaId;
     private readonly int Interval;
     private HttpClient HttpClient { get; }
+    private ISystemStats SystemStats;
 
     public VigilReporter(
         string url, 
@@ -41,24 +38,25 @@ public class VigilReporter: BackgroundService
         };
         HttpClient.DefaultRequestHeaders.Add("Accept", "application/hal+json");
         HttpClient.DefaultRequestHeaders.Add("Authorization", $"Basic: {SecretToken}");
-    }
-    
-    /// <summary>
-    /// Kick off a background thread that posts a report to vigil every Interval seconds.
-    /// </summary>
-    public void StartBackgroundReporting()
-    {
         
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+        {
+            SystemStats = new SystemStatsWindows();
+        }
+        else
+        {
+            SystemStats = new SystemStatsUnix();
+        }
     }
-    
+
     /// <summary>
     /// 
     /// </summary>
     /// <returns></returns>
-    private bool SendReport()
+    private async Task SendReport()
     {
-        var cpu = GetCpuLoad();
-        var ram = GetRamLoad();
+        var cpu = await GetCpuLoad();
+        var ram = await GetRamLoad();
         var payload = new ReportPacketDto
         {
             Replica = ReplicaId,
@@ -70,47 +68,25 @@ public class VigilReporter: BackgroundService
             }
         };
 
-        var posted = PostReport(payload);
-
-        return posted;
+        await PostReport(payload);
     }
 
     /// <summary>
     /// Method to check the current percentage usage of CPU.
     /// </summary>
     /// <returns>A float value between 0.00 and 1.00</returns>
-    private float GetCpuLoad()
+    private async Task<float> GetCpuLoad()
     {
-        float cpuLoad;
-        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-        {
-            cpuLoad = new SystemStatsWindows().CpuUsage();
-        }
-        else
-        {
-            cpuLoad = new SystemStatsUnix().CpuUsage();
-        }
-
-        return cpuLoad;
+        return await SystemStats.CpuUsage();
     }
 
     /// <summary>
     /// Method to check the percentage of total RAM that is in use.
     /// </summary>
     /// <returns>A float value between 0.00 and 1.00</returns>
-    private float GetRamLoad()
+    private async Task<float> GetRamLoad()
     {
-        float ramLoad;
-        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-        {
-            ramLoad = new SystemStatsWindows().MemoryUsage();
-        }
-        else
-        {
-            ramLoad = new SystemStatsUnix().MemoryUsage();
-        }
-
-        return ramLoad;
+        return await SystemStats.MemoryUsage();
     }
 
     /// <summary>
@@ -118,7 +94,7 @@ public class VigilReporter: BackgroundService
     /// </summary>
     /// <param name="packet"></param>
     /// <returns></returns>
-    private bool PostReport(ReportPacketDto packet)
+    private async Task<bool> PostReport(ReportPacketDto packet)
     {
         var jsonPayload = PayloadToJson(packet);
 
@@ -130,7 +106,7 @@ public class VigilReporter: BackgroundService
         };
         
         
-        var response = HttpClient.Send(request);
+        var response = await HttpClient.SendAsync(request);
         return response.IsSuccessStatusCode;
     }
 
@@ -154,15 +130,15 @@ public class VigilReporter: BackgroundService
         return JsonSerializer.Serialize(packet);
     }
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var intervalMs = 1000 * Interval;
-        do
+        await SystemStats.InitValues();
+        
+        while (!stoppingToken.IsCancellationRequested)
         {
-            Task.Delay(intervalMs, stoppingToken);
-
-            SendReport();
-
-        } while (!stoppingToken.IsCancellationRequested);
+            await Task.Delay(intervalMs, stoppingToken);
+            await SendReport();
+        }
     }
 }

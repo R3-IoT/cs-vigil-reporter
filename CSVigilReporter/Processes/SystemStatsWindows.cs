@@ -2,12 +2,12 @@ namespace CSVigilReporter.Processes;
 
 public class SystemStatsWindows: ISystemStats
 {
-    public float CpuUsage()
+    public async Task<float> CpuUsage()
     {
         throw new NotImplementedException();
     }
 
-    public float MemoryUsage()
+    public async Task<float> MemoryUsage()
     {
         throw new NotImplementedException();
     }
