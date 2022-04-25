@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSVigilReporter", "CSVigilReporter\CSVigilReporter.csproj", "{0ACF25E9-E6BE-49EE-8C17-2FA6CE232D1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSVigilReporterTest", "CSVigilReporterTest\CSVigilReporterTest.csproj", "{47CDCA71-DD61-43D0-B057-CB9DC31707CC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0ACF25E9-E6BE-49EE-8C17-2FA6CE232D1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0ACF25E9-E6BE-49EE-8C17-2FA6CE232D1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0ACF25E9-E6BE-49EE-8C17-2FA6CE232D1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0ACF25E9-E6BE-49EE-8C17-2FA6CE232D1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47CDCA71-DD61-43D0-B057-CB9DC31707CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47CDCA71-DD61-43D0-B057-CB9DC31707CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47CDCA71-DD61-43D0-B057-CB9DC31707CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47CDCA71-DD61-43D0-B057-CB9DC31707CC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
