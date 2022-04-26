@@ -3,11 +3,13 @@ using System.Text.Json;
 using CSVigilReporter.Dto;
 using CSVigilReporter.Processes;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace CSVigilReporter;
 
 public class VigilReporter: BackgroundService
 {
+    private readonly ILogger<VigilReporter> _logger;
     private readonly string Url;
     private readonly string SecretToken;
     private readonly string ProbeId;
@@ -23,8 +25,10 @@ public class VigilReporter: BackgroundService
         string probeId, 
         string nodeId, 
         string replicaId, 
-        int interval)
+        int interval,
+        ILoggerFactory loggerFactory)
     {
+        _logger = loggerFactory.CreateLogger<VigilReporter>();
         Url = url;
         SecretToken = secretToken;
         ProbeId = probeId;
@@ -41,11 +45,13 @@ public class VigilReporter: BackgroundService
         
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
-            SystemStats = new SystemStatsWindows();
+            SystemStats = new SystemStatsWindows(loggerFactory);
+            _logger.LogError("System Stats collecting not yet configured for windows systems");
+            throw new NotImplementedException();
         }
         else
         {
-            SystemStats = new SystemStatsUnix();
+            SystemStats = new SystemStatsUnix(loggerFactory);
         }
     }
 
