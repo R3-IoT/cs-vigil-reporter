@@ -113,6 +113,7 @@ public class VigilReporter: BackgroundService
         
         
         var response = await HttpClient.SendAsync(request);
+        _logger.LogInformation($"Report Sent. CPU: {packet.Load.Cpu}, RAM: {packet.Load.Ram}, Server response: {response.StatusCode}");
         return response.IsSuccessStatusCode;
     }
 
@@ -138,6 +139,7 @@ public class VigilReporter: BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _logger.LogInformation("Initialising System Stats");
         var intervalMs = 1000 * Interval;
         await SystemStats.InitValues();
         
