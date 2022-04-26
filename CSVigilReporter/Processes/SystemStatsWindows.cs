@@ -9,6 +9,8 @@ public class SystemStatsWindows: ISystemStats
     public SystemStatsWindows(ILoggerFactory loggerFactory)
     {
         Logger = loggerFactory.CreateLogger<SystemStatsWindows>();
+        Logger.LogError("System Stats collecting not yet configured for Windows systems");
+        throw new NotImplementedException();
     }
     public Task<float> CpuUsage()
     {

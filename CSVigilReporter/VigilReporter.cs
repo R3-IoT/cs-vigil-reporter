@@ -42,8 +42,6 @@ public class VigilReporter: BackgroundService
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
             SystemStats = new SystemStatsWindows(loggerFactory);
-            Logger.LogError("System Stats collecting not yet configured for windows systems");
-            throw new NotImplementedException();
         }
         else
         {
