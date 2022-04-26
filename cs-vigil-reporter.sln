@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSVigilReporter", "CSVigilR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSVigilReporterTest", "CSVigilReporterTest\CSVigilReporterTest.csproj", "{47CDCA71-DD61-43D0-B057-CB9DC31707CC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSVigilReporterDemo", "CSVigilReporterDemo\CSVigilReporterDemo.csproj", "{A78AF307-9828-400A-AE26-5E5ACB6405D8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{47CDCA71-DD61-43D0-B057-CB9DC31707CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47CDCA71-DD61-43D0-B057-CB9DC31707CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47CDCA71-DD61-43D0-B057-CB9DC31707CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A78AF307-9828-400A-AE26-5E5ACB6405D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A78AF307-9828-400A-AE26-5E5ACB6405D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A78AF307-9828-400A-AE26-5E5ACB6405D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A78AF307-9828-400A-AE26-5E5ACB6405D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

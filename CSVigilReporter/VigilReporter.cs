@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using CSVigilReporter.Dto;
 using CSVigilReporter.Processes;
@@ -9,15 +10,13 @@ namespace CSVigilReporter;
 
 public class VigilReporter: BackgroundService
 {
-    private readonly ILogger<VigilReporter> _logger;
-    private readonly string Url;
-    private readonly string SecretToken;
+    private readonly ILogger<VigilReporter> Logger;
     private readonly string ProbeId;
     private readonly string NodeId;
     private readonly string ReplicaId;
     private readonly int Interval;
     private HttpClient HttpClient { get; }
-    private ISystemStats SystemStats;
+    private readonly ISystemStats SystemStats;
 
     public VigilReporter(
         string url, 
@@ -26,27 +25,24 @@ public class VigilReporter: BackgroundService
         string nodeId, 
         string replicaId, 
         int interval,
+        HttpClient httpClient,
         ILoggerFactory loggerFactory)
     {
-        _logger = loggerFactory.CreateLogger<VigilReporter>();
-        Url = url;
-        SecretToken = secretToken;
+        Logger = loggerFactory.CreateLogger<VigilReporter>();
         ProbeId = probeId;
         NodeId = nodeId;
         ReplicaId = replicaId;
         Interval = interval;
-        HttpClient = new HttpClient
-        {
-            BaseAddress = new Uri(Url),
-
-        };
-        HttpClient.DefaultRequestHeaders.Add("Accept", "application/hal+json");
-        HttpClient.DefaultRequestHeaders.Add("Authorization", $"Basic: {SecretToken}");
+        HttpClient = httpClient;
+        var secret64Token = Convert.ToBase64String(Encoding.ASCII.GetBytes($":{secretToken}"));
+        HttpClient.BaseAddress = new Uri($"http://{url}/");
+        HttpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+        HttpClient.DefaultRequestHeaders.Add("Authorization", $"Basic {secret64Token}");
         
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
             SystemStats = new SystemStatsWindows(loggerFactory);
-            _logger.LogError("System Stats collecting not yet configured for windows systems");
+            Logger.LogError("System Stats collecting not yet configured for windows systems");
             throw new NotImplementedException();
         }
         else
@@ -100,21 +96,23 @@ public class VigilReporter: BackgroundService
     /// </summary>
     /// <param name="packet"></param>
     /// <returns></returns>
-    private async Task<bool> PostReport(ReportPacketDto packet)
+    private async Task PostReport(ReportPacketDto packet)
     {
-        var jsonPayload = PayloadToJson(packet);
-
-        var request = new HttpRequestMessage
-        {
-            RequestUri = new Uri($"{Url}reporter/{ProbeId}/{NodeId}"),
-            Method = HttpMethod.Post,
-            Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json")
-        };
-        
-        
-        var response = await HttpClient.SendAsync(request);
-        _logger.LogInformation($"Report Sent. CPU: {packet.Load.Cpu}, RAM: {packet.Load.Ram}, Server response: {response.StatusCode}");
-        return response.IsSuccessStatusCode;
+        // var jsonPayload = PayloadToJson(packet);
+        //
+        // var request = new HttpRequestMessage
+        // {
+        //     RequestUri = new Uri($"{Url}reporter/{ProbeId}/{NodeId}"),
+        //     Method = HttpMethod.Post,
+        //     Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json")
+        // };
+        //
+        //
+        // var response = await HttpClient.SendAsync(request);
+        var response = await HttpClient.PostAsJsonAsync($"reporter/{ProbeId}/{NodeId}", packet,
+            new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
+        Logger.LogInformation("Report Sent. CPU: {Cpu}, RAM: {Ram}, Server response: {StatusCode}", packet.Load.Cpu,
+            packet.Load.Ram, response.StatusCode);
     }
 
     /// <summary>
@@ -139,7 +137,7 @@ public class VigilReporter: BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Initialising System Stats");
+        Logger.LogInformation("Initialising System Stats");
         var intervalMs = 1000 * Interval;
         await SystemStats.InitValues();
         

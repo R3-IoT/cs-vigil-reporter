@@ -4,11 +4,11 @@ namespace CSVigilReporter.Processes;
 
 public class SystemStatsWindows: ISystemStats
 {
-    private readonly ILogger<SystemStatsWindows> _logger;
+    private readonly ILogger<SystemStatsWindows> Logger;
 
     public SystemStatsWindows(ILoggerFactory loggerFactory)
     {
-        _logger = loggerFactory.CreateLogger<SystemStatsWindows>();
+        Logger = loggerFactory.CreateLogger<SystemStatsWindows>();
     }
     public Task<float> CpuUsage()
     {

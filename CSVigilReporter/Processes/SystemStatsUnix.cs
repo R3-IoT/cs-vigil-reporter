@@ -8,10 +8,10 @@ public class SystemStatsUnix: ISystemStats
 {
     // Based on methods set out in https://github.com/dotnet/orleans/blob/main/src/TelemetryConsumers/Orleans.TelemetryConsumers.Linux/LinuxEnvironmentStatistics.cs
     // unless better implementation can be found.
-    private readonly ILogger<SystemStatsUnix> _logger;
+    private readonly ILogger<SystemStatsUnix> Logger;
 
-    private const string MEMINFO_FILEPATH = "/proc/meminfo";
-    private const string CPUSTAT_FILEPATH = "/proc/stat";
+    private const string MemInfoFilepath = "/proc/meminfo";
+    private const string CpuStatFilepath = "/proc/stat";
 
     private long PrevIdleTime { get; set; }
     private long PrevTotalTime { get; set; }
@@ -21,7 +21,7 @@ public class SystemStatsUnix: ISystemStats
 
     public SystemStatsUnix(ILoggerFactory loggerFactory)
     {
-        _logger = loggerFactory.CreateLogger<SystemStatsUnix>();
+        Logger = loggerFactory.CreateLogger<SystemStatsUnix>();
     }
 
     public async Task InitValues()
@@ -47,15 +47,15 @@ public class SystemStatsUnix: ISystemStats
     private async Task UpdateTotalMemory()
     {
 
-        var memTotalLine = await ReadLineStartingWithAsync(MEMINFO_FILEPATH, "MemTotal");
+        var memTotalLine = await ReadLineStartingWithAsync(MemInfoFilepath, "MemTotal");
         if (string.IsNullOrWhiteSpace(memTotalLine))
         {
-            _logger.LogWarning($"Couldn't read 'MemTotal' line from '{MEMINFO_FILEPATH}'");
+            Logger.LogWarning($"Couldn't read 'MemTotal' line from '{MemInfoFilepath}'");
             return;
         }
         if (!long.TryParse(new string(memTotalLine.Where(char.IsDigit).ToArray()), out var totalMemKb))
         {
-            _logger.LogWarning($"Couldn't parse meminfo output");
+            Logger.LogWarning($"Couldn't parse meminfo output");
             return;
         }
         
@@ -64,19 +64,19 @@ public class SystemStatsUnix: ISystemStats
 
     private async Task UpdateFreeMemory()
     {
-        var memFreeLine = await ReadLineStartingWithAsync(MEMINFO_FILEPATH, "MemAvailable");
+        var memFreeLine = await ReadLineStartingWithAsync(MemInfoFilepath, "MemAvailable");
         if (string.IsNullOrWhiteSpace(memFreeLine))
         {
-            memFreeLine = await ReadLineStartingWithAsync(MEMINFO_FILEPATH, "MemFree");
+            memFreeLine = await ReadLineStartingWithAsync(MemInfoFilepath, "MemFree");
             if (string.IsNullOrWhiteSpace(memFreeLine))
             {
-                _logger.LogWarning($"Couldn't read 'MemAvailable' or 'MemFree' line from '{MEMINFO_FILEPATH}'");
+                Logger.LogWarning($"Couldn't read 'MemAvailable' or 'MemFree' line from '{MemInfoFilepath}'");
                 return;
             }
         }
         if (!long.TryParse(new string(memFreeLine.Where(char.IsDigit).ToArray()), out var freeMemKb))
         {
-            _logger.LogWarning($"Couldn't parse meminfo output");
+            Logger.LogWarning($"Couldn't parse meminfo output");
             return;
         }
 
@@ -85,17 +85,18 @@ public class SystemStatsUnix: ISystemStats
 
     private async Task UpdateCpuUsage()
     {
-        var cpuUsageLine = await ReadLineStartingWithAsync(CPUSTAT_FILEPATH, "cpu ");
+        var cpuUsageLine = await ReadLineStartingWithAsync(CpuStatFilepath, "cpu ");
         if (string.IsNullOrWhiteSpace(cpuUsageLine))
         {
-            _logger.LogWarning($"Couldn't read 'MemTotal' line from '{CPUSTAT_FILEPATH}'");
+            Logger.LogWarning($"Couldn't read 'MemTotal' line from '{CpuStatFilepath}'");
             return;
         }
-        var cpuNumberStrings = cpuUsageLine.Split(' ').Skip(2);
+        var cpuNumberStrings = cpuUsageLine.Split(' ').Skip(2).ToArray();
 
         if (cpuNumberStrings.Any(n => !long.TryParse(n, out _)))
         {
-            _logger.LogWarning($"Failed to parse '{CPUSTAT_FILEPATH}' output correctly. Line: {cpuUsageLine}");
+            Logger.LogWarning("Failed to parse '{CpuStatFilepath}' output correctly. Line: {CpuUsageLine}",
+                CpuStatFilepath, cpuUsageLine);
             return;
         }
 
@@ -107,19 +108,16 @@ public class SystemStatsUnix: ISystemStats
         var deltaIdleTime = idleTime - PrevIdleTime;
         var deltaTotalTime = totalTime - PrevTotalTime;
 
-        // When running in gVisor, /proc/stat returns all zeros, so check here and leave CpuUsage unset.
-        // see: https://github.com/google/gvisor/blob/master/pkg/sentry/fs/proc/stat.go#L88-L95
         if (deltaTotalTime == 0f)
         {
             return;
         }
 
-        var currentCpuUsage = (1.0f - deltaIdleTime / ((float)deltaTotalTime)) * 100f;
+        var currentCpuUsage = 1.0f - deltaIdleTime / ((float)deltaTotalTime);
 
         var previousCpuUsage = CurrentCpuUsage ?? 0f;
         CurrentCpuUsage = (previousCpuUsage + 2 * currentCpuUsage) / 3;
         
-
         PrevIdleTime = idleTime;
         PrevTotalTime = totalTime;
     }
