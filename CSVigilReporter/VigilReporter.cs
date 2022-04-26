@@ -59,7 +59,7 @@ public class VigilReporter: BackgroundService
     /// 
     /// </summary>
     /// <returns></returns>
-    private async Task SendReport()
+    private async Task PrepareAndSendReport()
     {
         var cpu = await GetCpuLoad();
         var ram = await GetRamLoad();
@@ -146,7 +146,7 @@ public class VigilReporter: BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             await Task.Delay(intervalMs, stoppingToken);
-            await SendReport();
+            await PrepareAndSendReport();
         }
     }
 }

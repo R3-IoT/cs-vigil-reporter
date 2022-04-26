@@ -28,10 +28,4 @@ public class VigilReporterSpec
         Assert.Fail();
     }
 
-    [Test]
-    public void PayloadToJson_WhenCalled_TransformsPayloadDtoToString()
-    {
-        Assert.Fail();
-    }
-    
 }
