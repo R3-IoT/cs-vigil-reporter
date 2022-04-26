@@ -134,7 +134,7 @@ public class VigilReporter: BackgroundService
     /// <returns>A JSON string</returns>
     private string PayloadToJson(ReportPacketDto packet)
     {
-        return JsonSerializer.Serialize(packet);
+        return JsonSerializer.Serialize(packet).ToLower();
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
