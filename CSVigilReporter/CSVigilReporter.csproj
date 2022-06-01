@@ -4,6 +4,16 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>CSVigilReporter</Title>
+        <Authors>R3 IoT Ltd.</Authors>
+        <Description>Vigil Reporter for C#. Used in pair with Vigil, the Microservices Status Page.</Description>
+        <PackageProjectUrl>https://github.com/R3-IoT/cs-vigil-reporter</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/R3-IoT/cs-vigil-reporter</RepositoryUrl>
+        <Copyright>Copyright R3 IoT Ltd 2022</Copyright>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>vigil </PackageTags>
+        <PackageLicenseUrl>https://github.com/R3-IoT/cs-vigil-reporter/blob/master/LICENSE</PackageLicenseUrl>
     </PropertyGroup>
 
     <ItemGroup>
