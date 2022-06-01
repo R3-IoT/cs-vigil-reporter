@@ -20,7 +20,7 @@
 Install with .NET CLI:
 
 ```sh
-$ dotnet add package CSVigilReporter --version 1.0.0
+$ dotnet add package CSVigilReporter --version 1.0.2
 ```
 
 
@@ -41,7 +41,7 @@ int interval;
 
 if (builder.Environment.IsDevelopment())
 {
-    url = builder.Configuration.GetSection("VigilReporter").GetValue("Url", "localhost:8080");
+    url = builder.Configuration.GetSection("VigilReporter").GetValue("Url", "http://localhost:8080");
     secretToken = builder.Configuration.GetSection("VigilReporter").GetValue("SecretToken", "password");
     probeId = builder.Configuration.GetSection("VigilReporter").GetValue("ProbeId", "");
     nodeId = builder.Configuration.GetSection("VigilReporter").GetValue("NodeId", "");
