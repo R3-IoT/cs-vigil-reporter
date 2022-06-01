@@ -35,7 +35,7 @@ public class VigilReporter: BackgroundService
         Interval = interval;
         HttpClient = httpClient;
         var secret64Token = Convert.ToBase64String(Encoding.ASCII.GetBytes($":{secretToken}"));
-        HttpClient.BaseAddress = new Uri($"http://{url}/");
+        HttpClient.BaseAddress = new Uri($"{url}/");
         HttpClient.DefaultRequestHeaders.Add("Accept", "application/json");
         HttpClient.DefaultRequestHeaders.Add("Authorization", $"Basic {secret64Token}");
         
