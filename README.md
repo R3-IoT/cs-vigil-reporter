@@ -17,10 +17,10 @@
 
 
 # How to install
-Install with nuget:
+Install with .NET CLI:
 
 ```sh
-$ nuget install CSVigilReporter -OutputDirectory packages
+$ dotnet add package CSVigilReporter --version 1.0.0
 ```
 
 
