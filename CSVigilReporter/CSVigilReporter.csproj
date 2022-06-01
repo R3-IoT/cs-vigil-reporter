@@ -14,10 +14,11 @@
         <RepositoryType>git</RepositoryType>
         <PackageTags>vigil </PackageTags>
         <PackageLicenseUrl>https://github.com/R3-IoT/cs-vigil-reporter/blob/master/LICENSE</PackageLicenseUrl>
+        <PackageVersion>1.0.1</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
       <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     </ItemGroup>
 
