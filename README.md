@@ -2,12 +2,13 @@
 
 #### Vigil Reporter for C#. Used in pair with [Vigil](https://github.com/valeriansaliou/vigil), the Microservices Status Page.
 
+Find the package on nuget [here.](https://www.nuget.org/packages/CSVigilReporter/)
 
 ## Who uses it?
 
 <table>
 <tr>
-<td align="center"><a href="https://r3-iot.com/"><img src="https://r3-iot.com/imgs/logo.svg" height="32" /></a></td>
+<td align="center"><a href="https://r3-iot.com/"><img src="https://avatars.githubusercontent.com/u/55846740?s=200&v=4" height="64" /></a></td>
 </tr>
 <tr>
 <td align="center">R3 IoT Ltd.</td>
