@@ -14,7 +14,7 @@
         <RepositoryType>git</RepositoryType>
         <PackageTags>vigil </PackageTags>
         <PackageLicenseUrl>https://github.com/R3-IoT/cs-vigil-reporter/blob/master/LICENSE</PackageLicenseUrl>
-        <PackageVersion>1.0.2</PackageVersion>
+        <PackageVersion>1.0.3</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>

@@ -107,10 +107,17 @@ public class VigilReporter: BackgroundService
         //
         //
         // var response = await HttpClient.SendAsync(request);
-        var response = await HttpClient.PostAsJsonAsync($"reporter/{ProbeId}/{NodeId}", packet,
-            new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
-        Logger.LogInformation("Report Sent. CPU: {Cpu}, RAM: {Ram}, Server response: {StatusCode}", packet.Load.Cpu,
-            packet.Load.Ram, response.StatusCode);
+        try
+        {
+            var response = await HttpClient.PostAsJsonAsync($"reporter/{ProbeId}/{NodeId}", packet,
+                new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
+            Logger.LogInformation("Report Sent. CPU: {Cpu}, RAM: {Ram}, Server response: {StatusCode}",
+                packet.Load.Cpu, packet.Load.Ram, response.StatusCode);
+        }
+        catch (HttpRequestException e)
+        {
+            Logger.LogWarning(e, "Exception occurred during post request to Vigil server");
+        }
     }
 
     /// <summary>

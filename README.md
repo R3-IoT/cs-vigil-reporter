@@ -21,7 +21,7 @@ Find the package on nuget [here.](https://www.nuget.org/packages/CSVigilReporter
 Install with .NET CLI:
 
 ```sh
-$ dotnet add package CSVigilReporter --version 1.0.2
+$ dotnet add package CSVigilReporter --version 1.0.3
 ```
 
 
